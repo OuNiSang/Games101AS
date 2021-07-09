@@ -216,6 +216,7 @@ Eigen::Vector3f phong_fragment_shader(const fragment_shader_payload& payload)
 
     Eigen::Vector3f result_color = {0, 0, 0};
     Eigen::Vector3f view_dir = (eye_pos - point).normalized();
+
     for (auto& light : lights)
     {
         // TODO: For each light source in the code, calculate what the *ambient*, *diffuse*, and *specular* 
@@ -293,7 +294,8 @@ Eigen::Vector3f displacement_fragment_shader(const fragment_shader_payload& payl
 
 Eigen::Vector3f bump_fragment_shader(const fragment_shader_payload& payload)
 {
-    
+
+
     Eigen::Vector3f ka = Eigen::Vector3f(0.005, 0.005, 0.005);
     Eigen::Vector3f kd = payload.color;
     Eigen::Vector3f ks = Eigen::Vector3f(0.7937, 0.7937, 0.7937);
@@ -310,24 +312,48 @@ Eigen::Vector3f bump_fragment_shader(const fragment_shader_payload& payload)
     Eigen::Vector3f color = payload.color; 
     Eigen::Vector3f point = payload.view_pos;
     Eigen::Vector3f normal = payload.normal;
-
+    
 
     float kh = 0.2, kn = 0.1;
 
-    // TODO: Implement bump mapping here
+    // TODO: Implement bump mapping here        //see lec 10
     // Let n = normal = (x, y, z)
+    Eigen::Vector3f n = normal;
+    float x = n.x();
+    float y = n.y();
+    float z = n.z();
+
     // Vector t = (x*y/sqrt(x*x+z*z),sqrt(x*x+z*z),z*y/sqrt(x*x+z*z))
-    // Vector b = n cross product t
-    // Matrix TBN = [t b n]
+    Eigen::Vector3f t;
+    t <<    x*y/std::sqrt(x*x+z*z),
+            std::sqrt(x*x+z*z),
+            z*y/std::sqrt(x*x+z*z); //通过法线计算切线
+    
+    // Vector b = n cross product t b为副切线
+    Eigen::Vector3f b = n.cross(t);
+    // t.normalized();
+    // b.normalized();
+    // Matrix TBN = [t b n] //T (Tangent), B (Bitangent), N (Normal) 三个字母表示，即切线，副切线，法线
+    Eigen::Matrix3f TBN;
+    TBN << t,b,n;
     // dU = kh * kn * (h(u+1/w,v)-h(u,v))
     // dV = kh * kn * (h(u,v+1/h)-h(u,v))
-    // Vector ln = (-dU, -dV, 1)
-    // Normal n = normalize(TBN * ln)
+    // the para for cal of du and dv 
+    float u = payload.tex_coords(0);
+    float v = payload.tex_coords(1);
+    float w = payload.texture->width;
+    float h = payload.texture->height;
 
+    float dU = kh * kn * (payload.texture->getColor(u + 1.0f / w, v).norm() - payload.texture->getColor(u, v).norm());
+    float dV = kh * kn * (payload.texture->getColor(u + 1.0f , v + 1.0f / h).norm() - payload.texture->getColor(u,v).norm());
+
+    Eigen::Vector3f ln = {-dU, -dV, 1.0f};
+
+    normal = (TBN * ln).normalized();
 
     Eigen::Vector3f result_color = {0, 0, 0};
     result_color = normal;
-
+    // std::cout<<"Check4"<<std::endl;
     return result_color * 255.f;
 }
 
@@ -387,6 +413,8 @@ int main(int argc, const char** argv)
         {
             std::cout << "Rasterizing using the phong shader\n";
             active_shader = phong_fragment_shader;
+            // texture_path = "hamp.jpg";
+            // r.set_texture(Texture(obj_path + texture_path));
         }
         else if (argc == 3 && std::string(argv[2]) == "bump")
         {
