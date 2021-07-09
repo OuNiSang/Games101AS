@@ -8,6 +8,9 @@
 #include "Texture.hpp"
 #include "OBJ_Loader.h"
 
+inline double RadianConvert(float degree){return degree * MY_PI / 180;}
+inline double DEG2RAD(double deg) {return deg * MY_PI/180;}
+
 Eigen::Matrix4f get_view_matrix(Eigen::Vector3f eye_pos)
 {
     Eigen::Matrix4f view = Eigen::Matrix4f::Identity();
@@ -49,7 +52,61 @@ Eigen::Matrix4f get_model_matrix(float angle)
 
 Eigen::Matrix4f get_projection_matrix(float eye_fov, float aspect_ratio, float zNear, float zFar)
 {
-    // TODO: Use the same projection matrix from the previous assignments
+// TODO: Copy-paste your implementation from the previous assignment.
+    // Students will implement this function
+
+    Eigen::Matrix4f projection = Eigen::Matrix4f::Identity();
+
+    // // Create the projection matrix for the given parameters.
+    // // Then return it.
+    
+    // //P_Note*
+    // //just notice that the aspect_ratio is differ from the n and f that mentioned in Lec 4 P30
+    // //Aspect ratio should be in Lec5 P5 which is related to the FOV and convert y to x axis 
+        
+    // Eigen::Matrix4f perspToOrthoMatrix, otrthoMatrix, perspMatrix, inverseMatrix;
+    // Eigen::Matrix4f orthScaleMatrix, orthTranMatrix;
+    // float fovCovert = RadianConvert(eye_fov) / 2;
+
+    // //for z axis
+    // float n = zNear, f = zFar;
+    
+    // //for y axis
+    // float top = zNear * tan(fovCovert);   //same as t
+    // float bottom = -top;
+
+    // //for x axis 
+    // float right = top * aspect_ratio;     //same as r
+    // float left  = -right;
+
+    // float A = n + f;
+    // float B = -n * f;
+    // orthScaleMatrix<<2/(right-left),0,0,0,   0,2/(top-bottom),0,0,    0,0,2/(zNear-zFar),0,    0,0,0,1;   //ref Lec4 P24
+    
+    // orthTranMatrix<<1,0,0,-1*(right+left)/2,    0,1,0,-1*(top*bottom)/2,    0,0,1,-1*(n+f)/2,     0,0,0,1;        //ref Lec4 P24
+
+    // perspToOrthoMatrix<<n,0,0,0,    0,n,0,0,    0,0,A,B,    0,0,1,0;            //ref Lec4 P33~P36
+    
+    // inverseMatrix<<1,0,0,0, 0,1,0,0, 0,0,-1,0, 0,0,0,1;
+
+    // otrthoMatrix = orthScaleMatrix * orthTranMatrix;
+    // perspMatrix = otrthoMatrix * perspToOrthoMatrix;
+    // projection = perspMatrix * projection;
+    // projection << zNear/right,0,0,0,
+    //               0,zNear/top,0,0,
+    //               0,0,(zNear+zFar)/(zNear-zFar),(2*zNear*zFar)/(zFar-zNear),
+    //               0,0,1,0;
+
+    // return projection;
+
+    float top = -tan(DEG2RAD(eye_fov/2.0f) * abs(zNear));
+    float right = top * aspect_ratio;
+
+    projection << zNear/right,0,0,0,
+                  0,zNear/top,0,0,
+                  0,0,(zNear+zFar)/(zNear-zFar),(2*zNear*zFar)/(zFar-zNear),
+                  0,0,1,0;
+    return projection;
 
 }
 
@@ -142,6 +199,7 @@ Eigen::Vector3f phong_fragment_shader(const fragment_shader_payload& payload)
     {
         // TODO: For each light source in the code, calculate what the *ambient*, *diffuse*, and *specular* 
         // components are. Then, accumulate that result on the *result_color* object.
+        
         
     }
 
