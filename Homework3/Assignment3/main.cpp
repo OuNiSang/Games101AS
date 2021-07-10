@@ -246,7 +246,8 @@ Eigen::Vector3f phong_fragment_shader(const fragment_shader_payload& payload)
 
 Eigen::Vector3f displacement_fragment_shader(const fragment_shader_payload& payload)
 {
-    
+
+ 
     Eigen::Vector3f ka = Eigen::Vector3f(0.005, 0.005, 0.005);
     Eigen::Vector3f kd = payload.color;
     Eigen::Vector3f ks = Eigen::Vector3f(0.7937, 0.7937, 0.7937);
@@ -276,6 +277,29 @@ Eigen::Vector3f displacement_fragment_shader(const fragment_shader_payload& payl
     // Vector ln = (-dU, -dV, 1)
     // Position p = p + kn * n * h(u,v)
     // Normal n = normalize(TBN * ln)
+    Eigen::Vector3f  n = normal;
+    float x = n.x();
+    float y = n.y();
+    float z = n.z();
+
+    Eigen::Vector3f t = {x*y/sqrt(x*x+z*z),sqrt(x*x+z*z),z*y/sqrt(x*x+z*z)};
+    Eigen::Vector3f b = n.cross(t);
+    t.normalize();
+    b.normalize();
+    Eigen::Matrix3f TBN;
+    TBN<< t,b,n;
+
+    float u = payload.tex_coords.x();
+    float v = payload.tex_coords.y();
+    float w = payload.texture->width;
+    float h = payload.texture->height;
+
+    float dU = kh * kn * (payload.texture->getColor(u + 1.0f / w, v).norm() - payload.texture->getColor(u, v).norm());
+    float dV = kh * kn * (payload.texture->getColor(u + 0.9999f, v + 1.0f / h).norm() - payload.texture->getColor(u,v).norm()); //这里需要在u上+1 才可以保持不会segmentation fault，但是与公式不相同，比较疑惑
+    Eigen::Vector3f ln = {-dU, -dV, 1.0f};
+
+    point = point + kn * n * (payload.texture->getColor(u,v).norm());
+    normal = (TBN * ln).normalized();
 
 
     Eigen::Vector3f result_color = {0, 0, 0};
@@ -285,7 +309,23 @@ Eigen::Vector3f displacement_fragment_shader(const fragment_shader_payload& payl
         // TODO: For each light source in the code, calculate what the *ambient*, *diffuse*, and *specular* 
         // components are. Then, accumulate that result on the *result_color* object.
 
+        auto light_dir = (light.position - point).normalized(); //same as l
+        auto  view_dir = (eye_pos - point).normalized();
+        auto half_vec = (view_dir + light_dir).normalized(); //half vector
 
+        auto radiusPW2 =  (light.position - point).squaredNorm();
+
+        //ambient: L_a = k_a /dots I_a
+        auto ambient = ka.cwiseProduct(amb_light_intensity); //cwiseProuct允许Matrix直接进行点对点乘法，而不用转换至Array
+        
+        //Specular: k_s * (I / r^2)max(0, n /dots h)^p
+        auto specular = ks.cwiseProduct(light.intensity /  radiusPW2 * pow( MAX(0.0f, normal.dot(half_vec)),p));
+
+        //Diffuse:  k_d * (I/r^2) max (0, n /dots l)
+        auto diffuse = kd.cwiseProduct(light.intensity /  radiusPW2 * MAX(0, normal.dot(light_dir)));
+
+        result_color += ambient + specular + diffuse;
+        
     }
 
     return result_color * 255.f;
@@ -339,13 +379,13 @@ Eigen::Vector3f bump_fragment_shader(const fragment_shader_payload& payload)
     // dU = kh * kn * (h(u+1/w,v)-h(u,v))
     // dV = kh * kn * (h(u,v+1/h)-h(u,v))
     // the para for cal of du and dv 
-    float u = payload.tex_coords(0);
-    float v = payload.tex_coords(1);
+    float u = payload.tex_coords.x();
+    float v = payload.tex_coords.y();
     float w = payload.texture->width;
     float h = payload.texture->height;
 
     float dU = kh * kn * (payload.texture->getColor(u + 1.0f / w, v).norm() - payload.texture->getColor(u, v).norm());
-    float dV = kh * kn * (payload.texture->getColor(u + 1.0f , v + 1.0f / h).norm() - payload.texture->getColor(u,v).norm());
+    float dV = kh * kn * (payload.texture->getColor(u + 0.999f , v + 1.0f / h).norm() - payload.texture->getColor(u,v).norm()); //这里需要在u上+1 才可以保持不会segmentation fault，但是与公式不相同，比较疑惑
 
     Eigen::Vector3f ln = {-dU, -dV, 1.0f};
 
@@ -423,7 +463,7 @@ int main(int argc, const char** argv)
         }
         else if (argc == 3 && std::string(argv[2]) == "displacement")
         {
-            std::cout << "Rasterizing using the bump shader\n";
+            std::cout << "Rasterizing using the displacement shader\n";
             active_shader = displacement_fragment_shader;
         }
     }
