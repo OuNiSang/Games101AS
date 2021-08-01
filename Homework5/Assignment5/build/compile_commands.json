@@ -1,0 +1,19 @@
+[
+{
+  "directory": "/home/cs18/Desktop/Games101/Homework5/Assignment5/build",
+  "command": "/usr/bin/c++    -g   -Wall -Wextra -pedantic -Wshadow -Wreturn-type -fsanitize=undefined -std=gnu++1z -o CMakeFiles/RayTracing.dir/main.cpp.o -c /home/cs18/Desktop/Games101/Homework5/Assignment5/main.cpp",
+  "file": "/home/cs18/Desktop/Games101/Homework5/Assignment5/main.cpp"
+},
+
+{
+  "directory": "/home/cs18/Desktop/Games101/Homework5/Assignment5/build",
+  "command": "/usr/bin/c++    -g   -Wall -Wextra -pedantic -Wshadow -Wreturn-type -fsanitize=undefined -std=gnu++1z -o CMakeFiles/RayTracing.dir/Scene.cpp.o -c /home/cs18/Desktop/Games101/Homework5/Assignment5/Scene.cpp",
+  "file": "/home/cs18/Desktop/Games101/Homework5/Assignment5/Scene.cpp"
+},
+
+{
+  "directory": "/home/cs18/Desktop/Games101/Homework5/Assignment5/build",
+  "command": "/usr/bin/c++    -g   -Wall -Wextra -pedantic -Wshadow -Wreturn-type -fsanitize=undefined -std=gnu++1z -o CMakeFiles/RayTracing.dir/Renderer.cpp.o -c /home/cs18/Desktop/Games101/Homework5/Assignment5/Renderer.cpp",
+  "file": "/home/cs18/Desktop/Games101/Homework5/Assignment5/Renderer.cpp"
+}
+]
