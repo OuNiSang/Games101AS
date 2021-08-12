@@ -11,9 +11,13 @@
 // function().
 int main(int argc, char** argv)
 {
+    MeshTriangle bunny("../models/bunny/bunny.obj");
+
+
+
+    /*--------------- BVH ---------------*/
     Scene scene(1280, 960);
 
-    MeshTriangle bunny("../models/bunny/bunny.obj");
 
     scene.Add(&bunny);
     scene.Add(std::make_unique<Light>(Vector3f(-20, 70, 20), 1));
@@ -29,7 +33,25 @@ int main(int argc, char** argv)
     std::cout << "Render complete: \n";
     std::cout << "Time taken: " << std::chrono::duration_cast<std::chrono::hours>(stop - start).count() << " hours\n";
     std::cout << "          : " << std::chrono::duration_cast<std::chrono::minutes>(stop - start).count() << " minutes\n";
-    std::cout << "          : " << std::chrono::duration_cast<std::chrono::seconds>(stop - start).count() << " seconds\n";
+    std::cout << "          : " << std::chrono::duration_cast<std::chrono::seconds>(stop - start).count() << " seconds\n\n\n";
+
+    /*--------------- SAH ---------------*/
+    Scene scene2(1280, 960);
+
+    scene2.Add(&bunny);
+    scene2.Add(std::make_unique<Light>(Vector3f(-20, 70, 20), 1));
+    scene2.Add(std::make_unique<Light>(Vector3f(20, 70, 20), 1));
+    scene2.buildSAH();
+    Renderer k;
+
+    auto start2 = std::chrono::system_clock::now();
+    k.Render(scene2);
+    auto stop2 = std::chrono::system_clock::now();
+
+    std::cout << "Render complete: \n";
+    std::cout << "Time taken: " << std::chrono::duration_cast<std::chrono::hours>(stop2 - start2).count() << " hours\n";
+    std::cout << "          : " << std::chrono::duration_cast<std::chrono::minutes>(stop2 - start2).count() << " minutes\n";
+    std::cout << "          : " << std::chrono::duration_cast<std::chrono::seconds>(stop2 - start2).count() << " seconds\n\n\n";
 
     return 0;
 }

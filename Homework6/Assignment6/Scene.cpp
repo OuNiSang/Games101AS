@@ -6,8 +6,13 @@
 
 
 void Scene::buildBVH() {
-    printf(" - Generating BVH...\n\n");
+    printf(" -------- Generating BVH...\n\n");
     this->bvh = new BVHAccel(objects, 1, BVHAccel::SplitMethod::NAIVE);
+}
+
+void Scene::buildSAH() {
+    printf(" -------- Generating SAH...\n\n");
+    this->bvh = new BVHAccel(objects, 1, BVHAccel::SplitMethod::SAH);
 }
 
 Intersection Scene::intersect(const Ray &ray) const

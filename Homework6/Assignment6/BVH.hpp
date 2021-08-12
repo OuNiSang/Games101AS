@@ -21,6 +21,12 @@ struct BVHPrimitiveInfo;
 
 // BVHAccel Declarations
 inline int leafNodes, totalLeafNodes, totalPrimitives, interiorNodes;
+
+static constexpr int SAH_MIN_OBJECT_COUNT = 1;
+static constexpr int SAH_BUCKET_COUNT = 32;
+static constexpr float SAH_INTERSECTION_COST = 1.0;
+static constexpr float SAH_TRAVERSAL_COST = 0.125; //ref: https://zhuanlan.zhihu.com/p/375391720
+
 class BVHAccel {
 
 public:
