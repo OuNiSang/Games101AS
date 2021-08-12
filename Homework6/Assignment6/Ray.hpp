@@ -19,6 +19,7 @@ struct Ray{
 
     }
 
+     //return a vec based on distance
     Vector3f operator()(double t) const{return origin+direction*t;}
 
     friend std::ostream &operator<<(std::ostream& os, const Ray& r){
