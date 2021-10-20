@@ -1,0 +1,31 @@
+[
+{
+  "directory": "/home/cs18/Desktop/Games101/build",
+  "command": "/usr/bin/c++    -g   -std=gnu++1z -o CMakeFiles/RayTracing.dir/main.cpp.o -c /home/cs18/Desktop/Games101/Homework7/Assignment7/main.cpp",
+  "file": "/home/cs18/Desktop/Games101/Homework7/Assignment7/main.cpp"
+},
+
+{
+  "directory": "/home/cs18/Desktop/Games101/build",
+  "command": "/usr/bin/c++    -g   -std=gnu++1z -o CMakeFiles/RayTracing.dir/Vector.cpp.o -c /home/cs18/Desktop/Games101/Homework7/Assignment7/Vector.cpp",
+  "file": "/home/cs18/Desktop/Games101/Homework7/Assignment7/Vector.cpp"
+},
+
+{
+  "directory": "/home/cs18/Desktop/Games101/build",
+  "command": "/usr/bin/c++    -g   -std=gnu++1z -o CMakeFiles/RayTracing.dir/Scene.cpp.o -c /home/cs18/Desktop/Games101/Homework7/Assignment7/Scene.cpp",
+  "file": "/home/cs18/Desktop/Games101/Homework7/Assignment7/Scene.cpp"
+},
+
+{
+  "directory": "/home/cs18/Desktop/Games101/build",
+  "command": "/usr/bin/c++    -g   -std=gnu++1z -o CMakeFiles/RayTracing.dir/BVH.cpp.o -c /home/cs18/Desktop/Games101/Homework7/Assignment7/BVH.cpp",
+  "file": "/home/cs18/Desktop/Games101/Homework7/Assignment7/BVH.cpp"
+},
+
+{
+  "directory": "/home/cs18/Desktop/Games101/build",
+  "command": "/usr/bin/c++    -g   -std=gnu++1z -o CMakeFiles/RayTracing.dir/Renderer.cpp.o -c /home/cs18/Desktop/Games101/Homework7/Assignment7/Renderer.cpp",
+  "file": "/home/cs18/Desktop/Games101/Homework7/Assignment7/Renderer.cpp"
+}
+]
