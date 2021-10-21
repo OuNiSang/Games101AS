@@ -93,28 +93,44 @@ class Bounds3
 inline bool Bounds3::IntersectP(const Ray& ray, const Vector3f& invDir,
                                 const std::array<int, 3>& dirIsNeg) const
 {
-    // invDir: ray direction(x,y,z), invDir=(1.0/x,1.0/y,1.0/z), use this because Multiply is faster that Division
-    // dirIsNeg: ray direction(x,y,z), dirIsNeg=[int(x>0),int(y>0),int(z>0)], use this to simplify your logic
-    // TODO test if ray bound intersects
-    float tMaxX, tMaxY, tMaxZ, tMinX, tMinY, tMinZ;
-    tMinX = (pMin.x - ray.origin.x) * invDir.x;
-    tMaxX = (pMax.x - ray.origin.x) * invDir.x;
-    tMinY = (pMin.y - ray.origin.y) * invDir.y;
-    tMaxY = (pMax.y - ray.origin.y) * invDir.y;
-    tMinZ = (pMin.z - ray.origin.z) * invDir.z;
-    tMaxZ = (pMax.z - ray.origin.z) * invDir.z;
+    // // invDir: ray direction(x,y,z), invDir=(1.0/x,1.0/y,1.0/z), use this because Multiply is faster that Division
+    // // dirIsNeg: ray direction(x,y,z), dirIsNeg=[int(x>0),int(y>0),int(z>0)], use this to simplify your logic
+    // // TODO test if ray bound intersects
+    // float tMaxX, tMaxY, tMaxZ, tMinX, tMinY, tMinZ;
+    // tMinX = (pMin.x - ray.origin.x) * invDir.x;
+    // tMaxX = (pMax.x - ray.origin.x) * invDir.x;
+    // tMinY = (pMin.y - ray.origin.y) * invDir.y;
+    // tMaxY = (pMax.y - ray.origin.y) * invDir.y;
+    // tMinZ = (pMin.z - ray.origin.z) * invDir.z;
+    // tMaxZ = (pMax.z - ray.origin.z) * invDir.z;
 
-    //handleing negative ray direction contition 
-    if(!dirIsNeg[0]) std::swap(tMinX,tMaxX);
-    if(!dirIsNeg[1]) std::swap(tMinY,tMaxY);
-    if(!dirIsNeg[2]) std::swap(tMinZ,tMaxZ);
+    // //handleing negative ray direction contition 
+    // if(!dirIsNeg[0]) std::swap(tMinX,tMaxX);
+    // if(!dirIsNeg[1]) std::swap(tMinY,tMaxY);
+    // if(!dirIsNeg[2]) std::swap(tMinZ,tMaxZ);
 
-    float tEnter = std::max(tMinX, std::max(tMinY, tMinZ));     //ref: lec 13 36~38
-    float tExit  = std::min(tMaxX, std::min(tMaxY, tMaxZ));
+    // float tEnter = std::max(tMinX, std::max(tMinY, tMinZ));     //ref: lec 13 36~38
+    // float tExit  = std::min(tMaxX, std::min(tMaxY, tMaxZ));
 
-    if(tEnter <= tExit && tExit > 0) return true;
+    // return tEnter <= tExit && tExit > 0;
 
-    return false;
+    	// 光线进入点
+	float tEnter = -std::numeric_limits<float>::infinity();
+	// 光线离开点
+	float tExit = std::numeric_limits<float>::infinity();
+	for (int i = 0; i < 3; i++)
+	{
+		float min = (pMin[i] - ray.origin[i]) * invDir[i];
+		float max = (pMax[i] - ray.origin[i]) * invDir[i];
+		// 坐标为负的话，需要进行交换
+		if (!dirIsNeg[i])
+		{
+			std::swap(min, max);
+		}
+		tEnter = std::max(min, tEnter);
+		tExit = std::min(max, tExit);
+	}
+	return tEnter <= tExit && tExit > 0;
 }
 
 inline Bounds3 Union(const Bounds3& b1, const Bounds3& b2)

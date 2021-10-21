@@ -108,7 +108,7 @@ Intersection BVHAccel::Intersect(const Ray& ray) const
 Intersection BVHAccel::getIntersection(BVHBuildNode* node, const Ray& ray) const
 {
     // TODO Traverse the BVH to find intersection
-    //init param for IntersectP
+    // //init param for IntersectP
     Vector3f invDir = Vector3f{1.0f / ray.direction.x, 1.0f / ray.direction.y ,1.0f / ray.direction.z};
     std::array<int,3> dirIsNeg = {ray.direction.x > 0, ray.direction.y > 0, ray.direction.z > 0};
     

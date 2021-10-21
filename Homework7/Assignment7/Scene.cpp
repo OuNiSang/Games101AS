@@ -7,6 +7,7 @@
 
 void Scene::buildBVH() {
     printf(" - Generating BVH...\n\n");
+    if(objects.size() == 0) printf("ERROR: NO OBJECT\n");
     this->bvh = new BVHAccel(objects, 1, BVHAccel::SplitMethod::NAIVE);
 }
 
@@ -131,5 +132,20 @@ Vector3f Scene::castRay(const Ray &ray, int depth) const
     }
 
     return L_dir + L_indir;
-    
+
+    Intersection inter = intersect(ray);
+
+	if (inter.happened)
+	{
+		// 如果射线第一次打到光源，直接返回
+		if (inter.m->hasEmission())
+		{
+			if (depth == 0) 
+			{
+				return inter.m->getEmission();
+			}
+			else return Vector3f(0, 0, 0);
+		}
+    }
+
 }
