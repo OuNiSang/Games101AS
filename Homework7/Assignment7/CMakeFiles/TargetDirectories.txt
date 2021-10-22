@@ -1,0 +1,3 @@
+/home/cs18/Desktop/Games101/Homework7/Assignment7/CMakeFiles/rebuild_cache.dir
+/home/cs18/Desktop/Games101/Homework7/Assignment7/CMakeFiles/RayTracing.dir
+/home/cs18/Desktop/Games101/Homework7/Assignment7/CMakeFiles/edit_cache.dir

@@ -6,7 +6,6 @@
 #include "Scene.hpp"
 #include "Renderer.hpp"
 
-
 inline float deg2rad(const float& deg) { return deg * M_PI / 180.0; }
 
 const float EPSILON = 0.00001;
@@ -24,27 +23,80 @@ void Renderer::Render(const Scene& scene)
     int m = 0;
 
     // change the spp value to change sample ammount
-    int spp = 16;
+    int spp = 8;
     std::cout << "SPP: " << spp << "\n";
-    for (uint32_t j = 0; j < scene.height; ++j) {
-        for (uint32_t i = 0; i < scene.width; ++i) {
-            // generate primary ray direction
-            float x = (2 * (i + 0.5) / (float)scene.width - 1) *
-                      imageAspectRatio * scale;
-            float y = (1 - 2 * (j + 0.5) / (float)scene.height) * scale;
 
-            Vector3f dir = normalize(Vector3f(-x, y, 1));
-            for (int k = 0; k < spp; k++){
+
+    //mul threading
+    //REF: https://blog.csdn.net/qq_36242312/article/details/116307626?utm_term=games101%E4%BD%9C%E4%B8%9A7%E5%A4%9A%E7%BA%BF%E7%A8%8B&utm_medium=distribute.pc_aggpage_search_result.none-task-blog-2~all~sobaiduweb~default-0-116307626&spm=3001.4430
+    int processNum = 0;
+    int totalProcess = scene.width * scene.height;
+    std::mutex mutex_ins;
+
+    auto castRayMultiThreading = [&](uint32_t rowStart, uint32_t rowEnd, uint32_t colStart, uint32_t colEnd)
+    {
+        for (uint32_t j = rowStart; j < rowEnd; ++j){
+            int m = j * scene.width + colStart; //the fist frame for this thread
+            for (uint32_t i = colStart; i < colEnd; ++i){
+                // generate primary ray direction
+                float x = (2 * (i + 0.5) / (float)scene.width - 1) *
+                        imageAspectRatio * scale;
+                float y = (1 - 2 * (j + 0.5) / (float)scene.height) * scale;
+ 
+                Vector3f dir = normalize(Vector3f(-x, y, 1));
+                for (int k = 0; k < spp; k++){
                 framebuffer[m] += scene.castRay(Ray(eye_pos, dir), 0) / spp;  
             }
             m++;
+            processNum++;
+            }
+
+        //Mutex to update process
+        std::lock_guard<std::mutex> g1 (mutex_ins);
+        UpdateProgress(1.0 * processNum / totalProcess);
+
         }
-        UpdateProgress(j / (float)scene.height);
+    };
+
+    int id = 0;
+    constexpr int bx = 8; //must be constant during compile
+    constexpr int by = 8;
+    std::thread th[bx*by]; //num of totall thread and serialize them 
+
+    int strideX = (scene.width + 1) / bx; //step  for x
+    int strideY = (scene.height + 1)/ by; //step  for y
+
+    //Path tracing based on blocks 
+    for(int i = 0; i < scene.height; i += strideX){
+        for(int j = 0; j < scene.width; j += strideY){
+            th[id] = std::thread(castRayMultiThreading, i, std::min(i + strideX, scene.height), j, std::min(j + strideY, scene.width));
+            id++;
+        }
     }
+
+    //Start threads 
+    for(int i = 0; i < bx*by; i++) th[i].join();
     UpdateProgress(1.f);
 
+    // for (uint32_t j = 0; j < scene.height; ++j) {
+    //     for (uint32_t i = 0; i < scene.width; ++i) {
+    //         // generate primary ray direction
+    //         float x = (2 * (i + 0.5) / (float)scene.width - 1) *
+    //                   imageAspectRatio * scale;
+    //         float y = (1 - 2 * (j + 0.5) / (float)scene.height) * scale;
+
+    //         Vector3f dir = normalize(Vector3f(-x, y, 1));
+    //         for (int k = 0; k < spp; k++){
+    //             framebuffer[m] += scene.castRay(Ray(eye_pos, dir), 0) / spp;  
+    //         }
+    //         m++;
+    //     }
+    //     UpdateProgress(j / (float)scene.height);
+    // }
+    // UpdateProgress(1.f);
+
     // save framebuffer to file
-    FILE* fp = fopen("binary.ppm", "wb");
+    FILE* fp = fopen("binary.ppm_8", "wb");
     (void)fprintf(fp, "P6\n%d %d\n255\n", scene.width, scene.height);
     for (auto i = 0; i < scene.height * scene.width; ++i) {
         static unsigned char color[3];

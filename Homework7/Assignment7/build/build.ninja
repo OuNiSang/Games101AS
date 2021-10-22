@@ -49,27 +49,27 @@ build rebuild_cache: phony CMakeFiles/rebuild_cache.util
 build cmake_object_order_depends_target_RayTracing: phony
 build CMakeFiles/RayTracing.dir/main.cpp.o: CXX_COMPILER__RayTracing ../main.cpp || cmake_object_order_depends_target_RayTracing
   DEP_FILE = CMakeFiles/RayTracing.dir/main.cpp.o.d
-  FLAGS = -g   -std=gnu++1z
+  FLAGS = -pthread -g   -std=gnu++1z
   OBJECT_DIR = CMakeFiles/RayTracing.dir
   OBJECT_FILE_DIR = CMakeFiles/RayTracing.dir
 build CMakeFiles/RayTracing.dir/Vector.cpp.o: CXX_COMPILER__RayTracing ../Vector.cpp || cmake_object_order_depends_target_RayTracing
   DEP_FILE = CMakeFiles/RayTracing.dir/Vector.cpp.o.d
-  FLAGS = -g   -std=gnu++1z
+  FLAGS = -pthread -g   -std=gnu++1z
   OBJECT_DIR = CMakeFiles/RayTracing.dir
   OBJECT_FILE_DIR = CMakeFiles/RayTracing.dir
 build CMakeFiles/RayTracing.dir/Scene.cpp.o: CXX_COMPILER__RayTracing ../Scene.cpp || cmake_object_order_depends_target_RayTracing
   DEP_FILE = CMakeFiles/RayTracing.dir/Scene.cpp.o.d
-  FLAGS = -g   -std=gnu++1z
+  FLAGS = -pthread -g   -std=gnu++1z
   OBJECT_DIR = CMakeFiles/RayTracing.dir
   OBJECT_FILE_DIR = CMakeFiles/RayTracing.dir
 build CMakeFiles/RayTracing.dir/BVH.cpp.o: CXX_COMPILER__RayTracing ../BVH.cpp || cmake_object_order_depends_target_RayTracing
   DEP_FILE = CMakeFiles/RayTracing.dir/BVH.cpp.o.d
-  FLAGS = -g   -std=gnu++1z
+  FLAGS = -pthread -g   -std=gnu++1z
   OBJECT_DIR = CMakeFiles/RayTracing.dir
   OBJECT_FILE_DIR = CMakeFiles/RayTracing.dir
 build CMakeFiles/RayTracing.dir/Renderer.cpp.o: CXX_COMPILER__RayTracing ../Renderer.cpp || cmake_object_order_depends_target_RayTracing
   DEP_FILE = CMakeFiles/RayTracing.dir/Renderer.cpp.o.d
-  FLAGS = -g   -std=gnu++1z
+  FLAGS = -pthread -g   -std=gnu++1z
   OBJECT_DIR = CMakeFiles/RayTracing.dir
   OBJECT_FILE_DIR = CMakeFiles/RayTracing.dir
 
@@ -81,7 +81,7 @@ build CMakeFiles/RayTracing.dir/Renderer.cpp.o: CXX_COMPILER__RayTracing ../Rend
 # Link the executable RayTracing
 
 build RayTracing: CXX_EXECUTABLE_LINKER__RayTracing CMakeFiles/RayTracing.dir/main.cpp.o CMakeFiles/RayTracing.dir/Vector.cpp.o CMakeFiles/RayTracing.dir/Scene.cpp.o CMakeFiles/RayTracing.dir/BVH.cpp.o CMakeFiles/RayTracing.dir/Renderer.cpp.o
-  FLAGS = -g
+  FLAGS = -pthread -g
   OBJECT_DIR = CMakeFiles/RayTracing.dir
   POST_BUILD = :
   PRE_LINK = :
